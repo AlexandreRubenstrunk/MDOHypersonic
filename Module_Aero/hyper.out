@@ -1,0 +1,73 @@
+ --- Created by hyper, version 0.7 (31 Dec 2002)
+ --- Date: 21:13  2Nov2024
+ --- Uses module Methods, version 0.8 (24 Dec 2007)
+ --- Reading from file: C:\Users\alexa\Bureau\Perso\ESTACA\5A\Projet5A\MDOHypersonic\Module_Aero\hyperFolder\Analyse_Module_Aero.inp
+ Analyse module aero
+ Mach= 5.000  Sref=     39.7000  Cbar=  4.4553  Span=  8.9107
+ Moment Reference,   x=     12.2670  y=      0.0000  z=  0.0000
+     8 networks with    5452 panels
+
+ SOLUTIONS FOR COMPLETE VEHICLE IN BODY AXES
+  #  alpha   beta      cx        cy        cz       cmx       cmy       cmz
+  1  -2.00   0.00   0.02022  -0.00000  -0.05300   0.00000   0.02591   0.00000
+  2  -1.00   0.00   0.02014   0.00000  -0.02835   0.00000   0.01847  -0.00000
+  3   0.00   0.00   0.02010  -0.00000  -0.00292   0.00000   0.01066   0.00000
+  4   1.00   0.00   0.02012   0.00000   0.01114  -0.00000   0.01120   0.00000
+  5   2.00   0.00   0.02018  -0.00000   0.02718   0.00000   0.01011  -0.00000
+  6   4.00   0.00   0.02047   0.00000   0.06684   0.00000   0.00268  -0.00000
+  7   6.00   0.00   0.02094   0.00000   0.11684   0.00000  -0.01176   0.00000
+
+ SOLUTIONS FOR COMPLETE VEHICLE IN WIND AXES
+  #  alpha   beta     clift    cdrag     cpitch
+  1  -2.00   0.00  -0.05226   0.02206   0.02591
+  2  -1.00   0.00  -0.02800   0.02063   0.01847
+  3   0.00   0.00  -0.00292   0.02010   0.01066
+  4   1.00   0.00   0.01079   0.02031   0.01120
+  5   2.00   0.00   0.02646   0.02112   0.01011
+  6   4.00   0.00   0.06525   0.02508   0.00268
+  7   6.00   0.00   0.11401   0.03304  -0.01176
+
+ COMPUTATIONAL METHODS AND AVERAGE NORMALS
+    C=compression method;   E=expansion method
+   #  C  E    nx     ny     nz
+   1  7  5 -0.000  0.635 -0.000   Body
+   2  1  5  0.000 -0.001 -1.000   WING-UPPER
+   3  1  5  0.000 -0.001 -1.000   WING-UPPER
+   4  7  5 -0.000  0.619 -0.000   BODY
+   5  7  5 -0.000 -0.635 -0.000   global image of Body
+   6  1  5  0.000  0.001 -1.000   global image of WING-UPPER
+   7  1  5  0.000  0.001 -1.000   global image of WING-UPPER
+   8  7  5 -0.000 -0.619 -0.000   global image of BODY
+
+ COMPRESSION METHODS
+    1  Modified Newtonian
+    2  Newtonian-Prandtl-Meyer
+    3  Tangent Wedge
+    4  Tangent Wedge Infinite Mach
+    5  Old Tangent Cone
+    6  Cone At Angle Of Attack (later)
+    7  VanDyke Unified
+    8  Blunt Body Viscous (later)
+    9  Shock Expansion (later)
+   10  Free Molecular Flow (later)
+   11  Input value of CpStag
+   12  Hankey Flat Surface
+   13  Smyth Delta Wing
+   14  Modified Dahlem-Buck
+   15  BlastWave (later)
+   16  OSUBluntBody
+   17  Tangent Cone (Edwards)
+
+ EXPANSION METHODS
+    1  Cp=0
+    2  NewtonianPrandtlMeyer
+    3  PrandtlMeyer
+    4  ConeAtAngleOfAttack(later)
+    5  VanDykeUnified
+    6  Vacuum
+    7  Shock Expansion (later)
+    8  Input Value
+    9  Free Molecular Flow(later)
+   10  Modified Dahlem-Buck
+   11  ACMempirical(later)
+   12  half Prandtl-Meyer from freestream

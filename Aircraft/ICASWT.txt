@@ -1,0 +1,30 @@
+ICASWT
+
+FUSELAGE
+Lenght		:24.534
+Lenght_Cabine	:6.92
+Lenght_Nose	:10.49
+Diameter	:1.82
+OffSet_Nose	:0
+OffSet_Tail	:0.37
+
+WING
+Sref		:39.7
+Xref		:12.267
+AR		:2
+AF		:ICAS
+TR		:0.12
+PosX		:10.49
+PosZ		:-1
+Sweep		:55
+
+NACELLES
+Lenght		:7.53
+Lenght_Cabine	:3.43
+Lenght_Nose	:2.75
+Diameter	:1.58
+OffSet_Nose	:0
+OffSet_Tail	:0
+PosX		:10.09
+PosY		:0
+PosZ		:1.96

@@ -1,0 +1,95 @@
+
+Le but de ce module est de retourner les coefficient de trainer, portance et moment appliquer a l'aeronef pour les conditions de vol choisis.
+
+#######################################
+	Modélisation
+#######################################
+Modélisation du fuselage:
+On considère un fuselage circulaire avec en vu de coter que des droites. L'axe Z est orienter vers le haut pour les OffSet.
+Pour le fichier txt il faut respecter la norme suivante:
+
+Fuselage
+Lenght		: Longeur du fuselage (m)
+Lenght_Cabine	: Longeur de la cabine (m)
+Lenght_Nose	: Longeur du nez (m)
+Diameter	: Diametre du fuselage (m)
+OffSet_Nose	: Distance vertical entre la ligne médiane du fuselage et le nez (m)
+OffSet_Tail	: Distance vertical entre la ligne médiane du fuselage et la fin (m)
+
+
+
+#######################################
+	Fichier WGS
+#######################################
+
+
+# Recap du LaWGS format, voir pdf NASA TM 85767
+# Plusieur section avec la meme architecture pour toute les partis:
+
+'explication du doc en 80 caratere max'
+'NAME'		# Nom de la partie, Body, Wing Upper, Wing Lower…
+
+# Tout mettre sur une meme ligne sans nom dans l'ordre:
+UNIQUE_Number			: Pour identifier la pièce (1,2,3,4...)
+Number_Of_Controur_Line		: Indique le nombre de bloque. Un contour est un ensemble de point dans le plan le plus arrangant pour la géometrie considérer. (Pas sur) 
+Number_Of_Point_Per_Contourline	: Indique le nombre de point a definir par countour (Attention dans les bloque les coordonnée X,Y,Z sont dans le meme bloque	
+Symetry_Local			: Symétrie dans repère local 
+Rot_X Rot_Y Rox_Z		: Rotation selon les axes
+Trans_X Trans_Y Trans_Z		: Transaltion selon les axes
+Scale_X ScaleY ScaleZ		: Echelle de la pièce selon les axes
+Symetry_Global			: Symétrie dans le repère global
+
+# Exemple de ligne:
+'1    9     9 0    0 0 0   0 0 0   1 1 1    1'
+
+# Ensuite mettre les coordonnée des points:
+X Y Z				: Mettre les coordonée d'un meme point a la suite. Chaque paragraphe on augemente de contour (On augmente en X) 
+
+# Exemple de coordonner:
+
+  1.69105E+01  1.50000E+00  0.00000E+00  1.77542E+01  1.50000E+00 -8.85938E-02
+  1.85980E+01  1.50000E+00 -1.51875E-01  1.94417E+01  1.50000E+00 -1.89844E-01
+  2.02855E+01  1.50000E+00 -2.02500E-01  2.11292E+01  1.50000E+00 -1.89844E-01
+  2.19730E+01  1.50000E+00 -1.51875E-01  2.28167E+01  1.50000E+00 -8.85938E-02
+  2.36605E+01  1.50000E+00  0.00000E+00
+  1.88836E+01  2.56250E+00  0.00000E+00  1.96609E+01  2.56250E+00 -8.16211E-02
+  2.04382E+01  2.56250E+00 -1.39922E-01  2.12156E+01  2.56250E+00 -1.74902E-01
+  2.19929E+01  2.56250E+00 -1.86562E-01  2.27703E+01  2.56250E+00 -1.74902E-01
+  2.35476E+01  2.56250E+00 -1.39922E-01  2.43250E+01  2.56250E+00 -8.16211E-02
+  2.51023E+01  2.56250E+00  0.00000E+00
+  2.08566E+01  3.62500E+00  0.00000E+00  2.15676E+01  3.62500E+00 -7.46484E-02
+  2.22785E+01  3.62500E+00 -1.27969E-01  2.29894E+01  3.62500E+00 -1.59961E-01
+  2.37004E+01  3.62500E+00 -1.70625E-01  2.44113E+01  3.62500E+00 -1.59961E-01
+  2.51222E+01  3.62500E+00 -1.27969E-01  2.58332E+01  3.62500E+00 -7.46484E-02
+  2.65441E+01  3.62500E+00  0.00000E+00
+  2.28297E+01  4.68750E+00  0.00000E+00  2.34742E+01  4.68750E+00 -6.76758E-02
+  2.41187E+01  4.68750E+00 -1.16016E-01  2.47633E+01  4.68750E+00 -1.45020E-01
+  2.54078E+01  4.68750E+00 -1.54687E-01  2.60523E+01  4.68750E+00 -1.45020E-01
+  2.66969E+01  4.68750E+00 -1.16016E-01  2.73414E+01  4.68750E+00 -6.76758E-02
+  2.79859E+01  4.68750E+00  0.00000E+00
+  2.48027E+01  5.75000E+00  0.00000E+00  2.53809E+01  5.75000E+00 -6.07031E-02
+  2.59590E+01  5.75000E+00 -1.04062E-01  2.65371E+01  5.75000E+00 -1.30078E-01
+  2.71152E+01  5.75000E+00 -1.38750E-01  2.76934E+01  5.75000E+00 -1.30078E-01
+  2.82715E+01  5.75000E+00 -1.04062E-01  2.88496E+01  5.75000E+00 -6.07031E-02
+  2.94277E+01  5.75000E+00  0.00000E+00
+  2.67758E+01  6.81250E+00  0.00000E+00  2.72875E+01  6.81250E+00 -5.37305E-02
+  2.77993E+01  6.81250E+00 -9.21094E-02  2.83110E+01  6.81250E+00 -1.15137E-01
+  2.88227E+01  6.81250E+00 -1.22812E-01  2.93344E+01  6.81250E+00 -1.15137E-01
+  2.98461E+01  6.81250E+00 -9.21094E-02  3.03578E+01  6.81250E+00 -5.37305E-02
+  3.08696E+01  6.81250E+00  0.00000E+00
+  2.87489E+01  7.87500E+00  0.00000E+00  2.91942E+01  7.87500E+00 -4.67578E-02
+  2.96395E+01  7.87500E+00 -8.01562E-02  3.00848E+01  7.87500E+00 -1.00195E-01
+  3.05301E+01  7.87500E+00 -1.06875E-01  3.09754E+01  7.87500E+00 -1.00195E-01
+  3.14207E+01  7.87500E+00 -8.01562E-02  3.18661E+01  7.87500E+00 -4.67578E-02
+  3.23114E+01  7.87500E+00  0.00000E+00
+  3.07219E+01  8.93750E+00  0.00000E+00  3.11008E+01  8.93750E+00 -3.97852E-02
+  3.14797E+01  8.93750E+00 -6.82031E-02  3.18587E+01  8.93750E+00 -8.52539E-02
+  3.22376E+01  8.93750E+00 -9.09375E-02  3.26165E+01  8.93750E+00 -8.52539E-02
+  3.29954E+01  8.93750E+00 -6.82031E-02  3.33743E+01  8.93750E+00 -3.97852E-02
+  3.37532E+01  8.93750E+00  0.00000E+00
+  3.26950E+01  1.00000E+01  0.00000E+00  3.30075E+01  1.00000E+01 -3.28125E-02
+  3.33200E+01  1.00000E+01 -5.62500E-02  3.36325E+01  1.00000E+01 -7.03125E-02
+  3.39450E+01  1.00000E+01 -7.50000E-02  3.42575E+01  1.00000E+01 -7.03125E-02
+  3.45700E+01  1.00000E+01 -5.62500E-02  3.48825E+01  1.00000E+01 -3.28125E-02
+  3.51950E+01  1.00000E+01  0.00000E+00
+	

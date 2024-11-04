@@ -1,0 +1,7 @@
+&hyp  title='Analyse module aero',
+wgsFileName= 'hyperFolder\Analyse_Module_Aero.wgs' ,
+cmethods=7,1,1,7,
+emethods=5,5,5,5,
+mach=5, sref=39.7, cbar=4.455333881989093,
+alpha=-2,-1,0,1,2,4,6,
+xref=12.267, span=8.910667763978186/

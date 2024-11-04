@@ -1,0 +1,19 @@
+BodyTeste1
+
+FUSELAGE
+Lenght		:61.66
+Lenght_Cabine	:40
+Lenght_Nose	:7.3
+Diameter	:2.87
+OffSet_Nose	:0
+OffSet_Tail	:1.43
+
+WING
+Sref		:358
+Xref		:0
+AR		:1.82
+AF		:Teste1
+TR		:0.3
+PosX		:20
+PosZ		:1
+Sweep		:45
