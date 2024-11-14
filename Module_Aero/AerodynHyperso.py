@@ -245,7 +245,31 @@ def CreationNacelles(Avion:Aircraft,NB_CN,NB_Point_CN,Number):
 
     return STR,PN
 
-def FileCreation(Avion,Mach,Alphas,NB_CF=40, NB_Point_CF=30, NB_CW=30):
+def CFDFileWing(Avion:Aircraft,WingPoint):
+    Actual_Path = os.getcwd()
+    Actual_Path = Actual_Path.split("MDOHypersonic")[0]
+    AFPath = str(Actual_Path + "MDOHypersonic\\Aircraft\\CFDFile\\" + Avion.Name + "CFDWing.txt")
+
+    midpoint = WingPoint.shape[0]//2
+
+    Upper = WingPoint[:midpoint,:,:]
+    Lower = WingPoint[midpoint:,:,:]
+
+    Root = np.concatenate(Upper[0,:,:],Lower[0,:,:][::-1])
+    Tip = np.concatenate(Upper[-1,:,:],Lower[-1,:,:][::-1])
+
+    CfdFilePoint = np.concatenate(Root,Tip)
+
+    STR = str()
+    for i in range(CfdFilePoint.shape[0]):
+        str+=str("1\t" + str(i+1) + "\t" + CfdFilePoint[i])
+
+
+    with open(AFPath,"w") as File:
+        File.write(STR)
+    
+
+def FileCreation(Avion,Mach,Alphas,NB_CF=40, NB_Point_CF=30, NB_CW=30, CFD=False):
     """This function aime to create the file needed to compute an aircraft with Hyper.\n
     Avion: Is the studied aircraft\n
     Mach: Is the studied mach number\n
@@ -258,6 +282,10 @@ def FileCreation(Avion,Mach,Alphas,NB_CF=40, NB_Point_CF=30, NB_CW=30):
     FuselageSTR,FuselagePoint = CreationFuselage(Avion,NB_CF, NB_Point_CF)
     WingSTR,WingPoint = CreationWing(Avion,NB_CW)
     NacellesSTR,NacellesPoint = CreationNacelles(Avion,NB_CF,NB_Point_CF,2)
+
+    if CFD == True:
+        CFDFileWing(Avion,WingPoint)
+
 
     if __name__=="__main__":
         PlotAircraft(FuselagePoint,WingPoint,NacellesPoint)
@@ -412,7 +440,7 @@ def GetValues():
 def AeroStudie(filePath, Mach, Alphas):
     """ This function aime to do a full Hypersonic aerodynamic analysis"""
     Avion = Aircraft.OpenAvion(filePath)
-    FileCreation(Avion,Mach,Alphas)
+    FileCreation(Avion,Mach,Alphas,CFD=True)
     RunCalculation()
     CD,CL,CM = GetValues()
 
