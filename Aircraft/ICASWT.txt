@@ -28,3 +28,10 @@ OffSet_Tail	:0
 PosX		:10.09
 PosY		:0
 PosZ		:1.96
+
+ENGIN
+Compression_Ratio	:4	
+Engin_Sampling		:1.1
+Diameter		:1
+InternalDiameter	:0.8
+T_Combustion		:1800
