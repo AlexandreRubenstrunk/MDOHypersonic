@@ -79,12 +79,17 @@ def ThermoRamjet(RamJet:EngineRamJet,Mach, Altitude,Debit_Inlet):
     PtInlet = PsInf * (1 + (Gamma - 1) / 2 * Mach**2) ** (Gamma / (Gamma - 1))
     PtBeforeCombustion = PtInlet * RamJet.Compression_Ratio
     PtAfterCombustion = PtBeforeCombustion*0.98
+    #Good until here
+
+    # Thuyere amorcer et adapter 
+    Mach = (((PsInf/PtAfterCombustion)**((GammaChaud-1)/GammaChaud))-1)*GammaChaud/(GammaChaud-1)
 
     TsExit = TtCombustion*(PsInf/PtAfterCombustion)**((GammaChaud-1)/GammaChaud)
 
     ExitDensity = PsInf/(R*TsExit)
 
     Vexit = Debit_Inlet*1.1/(ExitDensity*((RamJet.Diameter/2)**2)*math.pi)
+
     return Vexit,ExitDensity
 
 def Thrust(Engin_name, Mach, Altitude):
@@ -92,7 +97,7 @@ def Thrust(Engin_name, Mach, Altitude):
     Engine_Studied = OpenEngin(Engin_name)
 
     Flight_Speed = FlightSpeedFCTMach(Mach,Altitude)
-    Debit_Inlet = math.pi*((Engine_Studied.Diameter/2)**2)*Flight_Speed
+    Debit_Inlet = math.pi*((Engine_Studied.Diameter/2)**2-(Engine_Studied.InternalDiameter/2)**2)*Flight_Speed
     Speed_Out,ExitDEnsity = ThermoRamjet(Engine_Studied,Mach, Altitude,Debit_Inlet)
     F = ExitDEnsity*Debit_Inlet*(1.1*Speed_Out-Flight_Speed)
 
