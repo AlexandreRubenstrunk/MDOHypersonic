@@ -440,7 +440,7 @@ def GetValues():
 def AeroStudie(filePath, Mach, Alphas):
     """ This function aime to do a full Hypersonic aerodynamic analysis"""
     Avion = Aircraft.OpenAvion(filePath)
-    FileCreation(Avion,Mach,Alphas,CFD=True)
+    FileCreation(Avion,Mach,Alphas)
     RunCalculation()
     CD,CL,CM = GetValues()
 
