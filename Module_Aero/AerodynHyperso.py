@@ -269,7 +269,7 @@ def CFDFileWing(Avion:Aircraft,WingPoint):
         File.write(STR)
     
 
-def FileCreation(Avion,Mach,Alphas,NB_CF=40, NB_Point_CF=30, NB_CW=30, CFD=False):
+def FileCreation(Avion,Mach,Alphas,NB_CF=4, NB_Point_CF=5, NB_CW=6, CFD=False):
     """This function aime to create the file needed to compute an aircraft with Hyper.\n
     Avion: Is the studied aircraft\n
     Mach: Is the studied mach number\n
