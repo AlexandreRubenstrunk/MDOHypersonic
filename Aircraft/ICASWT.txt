@@ -29,7 +29,7 @@ PosX		:10.09
 PosY		:0
 PosZ		:1.96
 
-ENGINTEste
+ENGIN
 Compression_Ratio	:4	
 Engin_Sampling		:1.1
 Diameter		:1
