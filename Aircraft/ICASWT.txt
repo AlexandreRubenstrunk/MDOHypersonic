@@ -30,8 +30,6 @@ PosY		:0
 PosZ		:1.96
 
 ENGIN
-Compression_Ratio	:4	
-Engin_Sampling		:1.1
-Diameter		:1
-InternalDiameter	:0.8
-T_Combustion		:1800
+IntakeDiameter	:1.37
+TCombustion	:3400
+Teta		:0.5
