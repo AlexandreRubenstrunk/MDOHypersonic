@@ -447,7 +447,7 @@ def AeroStudie(filePath, Mach, Alphas):
     return CD,CL,CM 
 
 if __name__=="__main__":
-    CD,CL,CM = AeroStudie("ICASWT",5,[-2,-1,0,1,2,4,6])
+    CD,CL,CM = AeroStudie("ICASWT",3.2,[-2,-1,0,1,2,4,6])
     print(str("CD: " + str(CD) + "\n"))
     print(str("CL: " + str(CL) + "\n"))
     print(str("CM: " + str(CM) + "\n"))
