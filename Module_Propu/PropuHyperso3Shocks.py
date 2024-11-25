@@ -18,11 +18,9 @@ FacteurTechnoCOmbustion = 0.95
 class EngineRamJet():
 
     def __init__(self):
-        self.Compression_Ratio = float()
-        self.Engin_Sampling = float()
-        self.Diameter = float()
-        self.InternalDiameter = float()
-        self.T_Combustion = float()
+        self.IntakeDiameter = float()
+        self.TCombustion = float()
+        self.Teta = float()
 
 
 
@@ -152,22 +150,20 @@ def Shock(Mach,P,Rho,T,Beta=math.pi/2,Teta=0):
 
     return M2,P2,Rho2,T2
 
-def intake3Shock(Mach,Altitude,Teta):
+def intake3Shock(RamJet:EngineRamJet,Mach,Altitude):
     """ This function aime to calculer the mach, the pressure and the air density after a 3 shock intake.
     Mach = Mach of the studied fly condition
     Altitude = Altituded of the studied flight condition"""
     P, Rho, T = ISA(Altitude)
-    Beta1 = Angle1(Mach,Teta)
-    # Beta2 = Angle2(Mach)
-    Beta2 = Beta1+Teta
-    # Teta = Deflection(Beta1,Mach)
+    Beta1 = Angle1(Mach,RamJet.Teta)
+    Beta2 = Beta1+RamJet.Teta
     V = Mach * (Gamma*R*T)**0.5
 
-    M2,P2,Rho2,T2 = Shock(Mach,P,Rho,T,Beta=Beta1,Teta=Teta)
-    M3,P3,Rho3,T3 = Shock(M2,P2,Rho2,T2,Beta = Beta2-Teta)
+    M2,P2,Rho2,T2 = Shock(Mach,P,Rho,T,Beta=Beta1,Teta=RamJet.Teta)
+    M3,P3,Rho3,T3 = Shock(M2,P2,Rho2,T2,Beta = Beta2-RamJet.Teta)
     M4,P4,Rho4,T4 = Shock(M3,P3,Rho3,T3)
 
-    return M4,P4,Rho4,T4,P,V,Beta1,Beta2,Teta
+    return M4,P4,Rho4,T4,P,V,Beta1,Beta2
 
 def diffuseur(Mach4,D4,X4,Rho4,T4,P4,Mach5=0.2):
     """COnservation of massique debit the use of bernouille to have Rho and P
@@ -215,16 +211,16 @@ def diffuseur(Mach4,D4,X4,Rho4,T4,P4,Mach5=0.2):
 
     return Mach5,P5,Rho5,T5,D5,D5+X4,Debit4
 
-def CombustionChamberToCol(T6,M56,D56,P5,M7 = 1):
+def CombustionChamberToCol(RamJet:EngineRamJet,M56,D56,P5,M7 = 1):
     """The thuyere is adapater and amorced. Which mean that at section7 mach=1"""
 
     P6 = P5 * FacteurTechnoCOmbustion
-    Rho6 = P5/(T6*R)
-    V6 = M56*(GammaChaud*R*T6)**0.5
+    Rho6 = P5/(RamJet.TCombustion*R)
+    V6 = M56*(GammaChaud*R*RamJet.TCombustion)**0.5
 
     Debit67 = math.pi*((D56/2)**2)*V6*Rho6
 
-    Tt67 = T6*(1+(GammaChaud-1)/2*M56)
+    Tt67 = RamJet.TCombustion*(1+(GammaChaud-1)/2*M56)
     T7 = Tt67/(1+(GammaChaud-1)/2*M7)
     V7 = M7*(GammaChaud*R*T7)**0.5
     Rhot67 = Rho6/(((GammaChaud-1)/2*M56**2)**(1/GammaChaud-1))
@@ -240,7 +236,7 @@ def CombustionChamberToCol(T6,M56,D56,P5,M7 = 1):
 
     return D7,P7,T7,Rho7
 
-def Section34(IntakeDiameter,Beta1,Beta2,Teta):
+def Section34(RamJet:EngineRamJet,Beta1,Beta2):
     """Just geometrical analysis (see picture)
     IntakeDiameter = Diameter of the front intake
     Beta1 = Angle of the first shock
@@ -250,10 +246,10 @@ def Section34(IntakeDiameter,Beta1,Beta2,Teta):
     D4 = Diamter after the intake
     X4 = Postion on X of the D4"""
 
-    X2 = math.tan(math.pi/2 - Beta1)*IntakeDiameter
+    X2 = math.tan(math.pi/2 - Beta1)*RamJet.IntakeDiameter
 
-    D4 = math.tan(Beta2)*(IntakeDiameter/math.sin(Teta)-X2)/(1+math.tan(Beta2)/math.sin(Teta))
-    X4 = (IntakeDiameter-D4)/math.sin(Teta)
+    D4 = math.tan(Beta2)*(RamJet.IntakeDiameter/math.sin(RamJet.Teta)-X2)/(1+math.tan(Beta2)/math.sin(RamJet.Teta))
+    X4 = (RamJet.IntakeDiameter-D4)/math.sin(RamJet.Teta)
     return D4,X4
 
 def Nozzel(D7,P7,T7,Rho7,Pinf,M7=1):
@@ -266,17 +262,18 @@ def Nozzel(D7,P7,T7,Rho7,Pinf,M7=1):
 
     return V8
 
-def GraphRamjet(IntakeDiameter,D4,X4,D5,X5,D6,X6,D7,X7,D8,X8):
+def GraphRamjet(RamJet:EngineRamJet,D4,X4,D5,X5,D6,X6,D7,X7,D8,X8):
     Upper = np.array([0,0])
-    Lower = np.array([0,-IntakeDiameter])
+    Lower = np.array([0,-RamJet.IntakeDiameter])
 
     Lower = np.vstack([Lower, np.array([X4,-D4])])
     Lower = np.vstack([Lower, np.array([X5,-D5])])
     Lower = np.vstack([Lower, np.array([X6,-D6])])
     Lower = np.vstack([Lower, np.array([X7,-D7])])
-    Lower = np.vstack([Lower, np.array([X8,-D8])])
+    Lower = np.vstack([Lower, np.array([X8,-D8/2-D7/2])])
 
-    Upper = np.vstack([Upper, np.array([Lower[-1,0],0])])
+    Upper = np.vstack([Upper, np.array([Lower[-2,0],0])])
+    Upper = np.vstack([Upper, np.array([X8,D8/2-D7/2])])
     plt.figure()
     plt.plot(Lower[:,0],Lower[:,1],color="b")
     plt.plot(Upper[:,0],Upper[:,1],color="b")
@@ -285,13 +282,14 @@ def GraphRamjet(IntakeDiameter,D4,X4,D5,X5,D6,X6,D7,X7,D8,X8):
     return
 
 
-def RamJet(Mach, Altitude, IntakeDiameter,TCombustion,Teta):
-    M4,P4,Rho4,T4,Pinf,Vinf,Beta1,Beta2,Teta = intake3Shock(Mach,Altitude,Teta)
-    D4,X4 = Section34(IntakeDiameter,Beta1,Beta2,Teta)
+def RamJet(Mach, Altitude, Name):
+    RamJetStudied = OpenEngin(Name)
+    M4,P4,Rho4,T4,Pinf,Vinf,Beta1,Beta2 = intake3Shock(RamJetStudied,Mach,Altitude)
+    D4,X4 = Section34(RamJetStudied,Beta1,Beta2)
 
     M5,P5,Rho5,T5,D5,X5,DebitMassique = diffuseur(M4,D4,X4,Rho4,T4,P4)
 
-    D7,P7,T7,Rho7 = CombustionChamberToCol(TCombustion,M5,D5,P5)
+    D7,P7,T7,Rho7 = CombustionChamberToCol(RamJetStudied,M5,D5,P5)
     V8 = Nozzel(D7,P7,T7,Rho7,Pinf)
 
     F = DebitMassique*(1.1*V8-Vinf)
@@ -305,19 +303,17 @@ def RamJet(Mach, Altitude, IntakeDiameter,TCombustion,Teta):
     X8 = X7+D8
 
 
-    GraphRamjet(IntakeDiameter,D4,X4,D5,X5,D6,X6,D7,X7,D8,X8)
+    GraphRamjet(RamJetStudied,D4,X4,D5,X5,D6,X6,D7,X7,D8,X8)
 
     return F
 
 
 if __name__ == "__main__":
 
-    Mach = 3.2
+    Mach = 5
     Altitude = 0
-    IntakeDiameter = 1.34
-    TCombustion = 3400
-    Teta = math.radians(20)
-    print(RamJet(Mach, Altitude, IntakeDiameter,TCombustion,Teta))
+    Name = "ICASWT"
+    print(RamJet(Mach, Altitude, Name))
 
     # ram = EngineRamJet()
     # Thrust("ICASWT",5,20000)
