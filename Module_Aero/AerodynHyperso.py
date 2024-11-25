@@ -230,7 +230,7 @@ def CreationWing(Avion,NB_CW):
     STR_Lower = str("\n'WING-LOWER'\n1\t" + str(NB_CW) + "\t"+ str(NB_Point_CW) + "\t0\t0 0 0\t0 0 0\t1 1 1\t1")
     STR_Lower = Point2String(PW_Lower,STR_Lower,NB_CW,NB_Point_CW)  
 
-    STR_Wing = STR_Upper + STR_Upper
+    STR_Wing = STR_Upper + STR_Lower
     PW = np.concatenate((PW_Upper,PW_Lower))
 
     return STR_Wing, PW
