@@ -437,9 +437,9 @@ def GetValues():
 
     return CD,CL,CM
  
-def AeroStudie(filePath, Mach, Alphas):
+def AeroStudie(Avion, Mach, Alphas):
     """ This function aime to do a full Hypersonic aerodynamic analysis"""
-    Avion = Aircraft.OpenAvion(filePath)
+    
     FileCreation(Avion,Mach,Alphas)
     RunCalculation()
     CD,CL,CM = GetValues()
@@ -447,7 +447,8 @@ def AeroStudie(filePath, Mach, Alphas):
     return CD,CL,CM 
 
 if __name__=="__main__":
-    CD,CL,CM = AeroStudie("ICASWT",3.2,[-2,-1,0,1,2,4,6])
+    Avion = Aircraft.OpenAvion("ICASWT")
+    CD,CL,CM = AeroStudie(Avion,3.2,[-2,-1,0,1,2,4,6])
     print(str("CD: " + str(CD) + "\n"))
     print(str("CL: " + str(CL) + "\n"))
     print(str("CM: " + str(CM) + "\n"))

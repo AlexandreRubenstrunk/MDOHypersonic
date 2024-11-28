@@ -21,6 +21,55 @@ class EngineRamJet():
         self.IntakeDiameter = float()
         self.TCombustion = float()
         self.Teta = float()
+    
+    def OpenEngin(Name):
+        Actual_Path = os.getcwd()
+        Actual_Path = Actual_Path.split("MDOHypersonic")[0]
+        filePath = str(Actual_Path + "MDOHypersonic\\Aircraft\\" + str(Name) + ".txt")
+
+        with open(filePath,'r') as file:
+            Data = file.read()
+        Parts1Line = Data.split("\n\n")
+        Parts = []
+        for Part1Line in Parts1Line:
+            Part = Part1Line.split("\n")
+            Parts.append(Part)
+
+        Engin = EngineRamJet()
+        
+        parties = {
+        "ENGIN": Engin,
+        }
+
+        for Part in Parts:
+            if Part[0] in parties:
+                for Param in Part[1:]:
+                    Split = Param.split(":")
+                    Attribut = Split[0].strip()
+                    Value = Split[1].strip()
+                    if hasattr(parties[Part[0]], Attribut):
+                        if "AF" in Attribut:
+                            setattr(parties[Part[0]], Attribut, Value)
+                        else:
+                            setattr(parties[Part[0]], Attribut, float(Value))
+        
+        return Engin
+    
+    def ISA(Altitude):
+        H_Base = 11000
+        if Altitude<H_Base:
+            Pbase = 101325
+            Tbase = 288.15
+            TAltitude = T0-0.0065*Altitude
+            PsInf = Pbase*(TAltitude/Tbase)**(-9.81*MmAir/(Rgp*(-0.0065)))
+        else:
+            Pbase = 22632.1
+            TAltitude = 216.65
+            PsInf = Pbase*math.exp(-9.81*MmAir*(Altitude-H_Base)/(Rgp*TAltitude))
+
+        Rho = PsInf/(R*TAltitude)
+
+        return PsInf,Rho, TAltitude
 
 
 
@@ -36,54 +85,7 @@ def FlightSpeedFCTMach(Mach,Altitude):
     FlightSpeed = Mach * Speed_of_Sound
     return FlightSpeed
 
-def OpenEngin(Name):
-    Actual_Path = os.getcwd()
-    Actual_Path = Actual_Path.split("MDOHypersonic")[0]
-    filePath = str(Actual_Path + "MDOHypersonic\\Aircraft\\" + str(Name) + ".txt")
 
-    with open(filePath,'r') as file:
-        Data = file.read()
-    Parts1Line = Data.split("\n\n")
-    Parts = []
-    for Part1Line in Parts1Line:
-        Part = Part1Line.split("\n")
-        Parts.append(Part)
-
-    Engin = EngineRamJet()
-    
-    parties = {
-    "ENGIN": Engin,
-    }
-
-    for Part in Parts:
-        if Part[0] in parties:
-            for Param in Part[1:]:
-                Split = Param.split(":")
-                Attribut = Split[0].strip()
-                Value = Split[1].strip()
-                if hasattr(parties[Part[0]], Attribut):
-                    if "AF" in Attribut:
-                        setattr(parties[Part[0]], Attribut, Value)
-                    else:
-                        setattr(parties[Part[0]], Attribut, float(Value))
-    
-    return Engin
-
-def ISA(Altitude):
-    H_Base = 11000
-    if Altitude<H_Base:
-        Pbase = 101325
-        Tbase = 288.15
-        TAltitude = T0-0.0065*Altitude
-        PsInf = Pbase*(TAltitude/Tbase)**(-9.81*MmAir/(Rgp*(-0.0065)))
-    else:
-        Pbase = 22632.1
-        TAltitude = 216.65
-        PsInf = Pbase*math.exp(-9.81*MmAir*(Altitude-H_Base)/(Rgp*TAltitude))
-
-    Rho = PsInf/(R*TAltitude)
-
-    return PsInf,Rho, TAltitude
 
 
 def Angle1(Mach,Teta,Type="TetaKnow"):
@@ -102,11 +104,11 @@ def Angle1(Mach,Teta,Type="TetaKnow"):
 
     if Type == "TetaKnow":
         def equation(Beta1):
-            return np.atan(2 / np.tan(Beta1) * 
+            return np.arctan(2 / np.tan(Beta1) * 
                             (Mach**2 * np.sin(Beta1)**2 - 1) / 
                             (Mach**2 * (Gamma + np.cos(2 * Beta1)) + 2)) - Teta
 
-        Beta1_initial_guess = np.radians(30)  
+        Beta1_initial_guess = np.radians(30)
 
         Beta = fsolve(equation, Beta1_initial_guess)[0]
         
@@ -154,7 +156,7 @@ def intake3Shock(RamJet:EngineRamJet,Mach,Altitude):
     """ This function aime to calculer the mach, the pressure and the air density after a 3 shock intake.
     Mach = Mach of the studied fly condition
     Altitude = Altituded of the studied flight condition"""
-    P, Rho, T = ISA(Altitude)
+    P, Rho, T = EngineRamJet.ISA(Altitude)
     Beta1 = Angle1(Mach,RamJet.Teta)
     Beta2 = Beta1+RamJet.Teta
     V = Mach * (Gamma*R*T)**0.5
@@ -282,8 +284,7 @@ def GraphRamjet(RamJet:EngineRamJet,D4,X4,D5,X5,D6,X6,D7,X7,D8,X8):
     return
 
 
-def RamJet(Mach, Altitude, Name):
-    RamJetStudied = OpenEngin(Name)
+def RamJet(RamJetStudied,Mach, Altitude):
     M4,P4,Rho4,T4,Pinf,Vinf,Beta1,Beta2 = intake3Shock(RamJetStudied,Mach,Altitude)
     D4,X4 = Section34(RamJetStudied,Beta1,Beta2)
 
@@ -313,7 +314,8 @@ if __name__ == "__main__":
     Mach = 5
     Altitude = 0
     Name = "ICASWT"
-    print(RamJet(Mach, Altitude, Name))
+    RamJetStudied = EngineRamJet.OpenEngin(Name)
+    print(RamJet(RamJetStudied,Mach, Altitude))
 
     # ram = EngineRamJet()
     # Thrust("ICASWT",5,20000)
