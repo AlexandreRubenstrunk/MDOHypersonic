@@ -88,8 +88,8 @@ max_area = 400
 min_lenght = 50
 max_lenght = 70
 
-optim.add_design_var('Sref', lower_bound=min_area, upper_bound=max_area)
-optim.add_design_var('Lenght', lower_bound=min_lenght, upper_bound=max_lenght)
+optim.add_unknown('Sref', lower_bound=min_area, upper_bound=max_area)
+optim.add_unknown('Lenght', lower_bound=min_lenght, upper_bound=max_lenght)
 optim.set_minimum('CD')
 
 MDO.run_drivers()
