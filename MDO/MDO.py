@@ -11,12 +11,18 @@ from Module_Aero.AerodynHyperso import AeroStudie,Wing,Aircraft,Body
 from cosapp.base import System
 from cosapp.drivers import Optimizer
 
+gamma = 1.4
+R = 287
 Mach = 5
 Altitude = 20000
-Avion = "ICASWT"
+Avion = "ProtoConcord"
+MTOW = 185000
 
 StudyAircraft = Aircraft.OpenAvion(Avion)
 StudyRamJet = EngineRamJet.OpenEngin(Avion)
+PsInf,Rho, TAltitude = EngineRamJet.ISA(Altitude)
+V = Mach*(gamma*R*TAltitude)**0.5
+count=0
 
 
 class Aero(System):
@@ -37,6 +43,11 @@ class Aero(System):
         self.add_inward('PosX', StudyAircraft.Wing.PosX, unit="m", desc="Position of the wing on X")
         self.add_inward('PosZ', StudyAircraft.Wing.PosZ, unit="m", desc="Position of the wing on Z")
         self.add_inward('Sweep', StudyAircraft.Wing.Sweep, unit="deg", desc="Sweep of the wing")
+
+        self.add_inward('Rho',Rho,unit="kg/m**3",desc="Air density at the studied altitude")
+        self.add_inward('V',V,unit='m/s',desc="Speed of the studied flight")
+        self.add_inward('MTOW',MTOW,unit='kg',desc="Maximum Take Off Weight")
+        self.add_inward('count',count,desc="Count iteration")
 
 
         self.add_outward('CD', 0.0, desc="Drag Coefficient")
@@ -69,10 +80,13 @@ class Aero(System):
                 setattr(aircraft.Fuselage, AttFuse[j], Value)
 
             return aircraft
-
+        print(self.Sref)
+        self.count= self.count+1
         StudyAircraft = update_aircraft_from_aero(StudyAircraft)
         CD,CL,CM = AeroStudie(StudyAircraft,Mach,[-2,-1,0,1,2,4,6])
-        self.CD = CD[2]
+        self.CD = CD[4]
+        self.CL = CL[4]
+        self.CM = CM[4]
         # return super().compute()
 
 
@@ -80,7 +94,7 @@ class Aero(System):
 
 MDO = Aero("MDO")
 
-optim = MDO.add_driver(Optimizer('optim', method='SLSQP'))
+optim = MDO.add_driver(Optimizer('optim'))
 
 min_area = 300
 max_area = 400
@@ -88,52 +102,17 @@ max_area = 400
 min_lenght = 50
 max_lenght = 70
 
-optim.add_unknown('Sref', lower_bound=min_area, upper_bound=max_area)
+# optim.add_unknown('Sref', lower_bound=min_area, upper_bound=max_area)
 optim.add_unknown('Lenght', lower_bound=min_lenght, upper_bound=max_lenght)
+optim.add_unknown(["Sref",'Xref', 'AR', 'TR', 'PosX', 'PosZ', 'Sweep'])
+optim.add_constraints([
+
+    '0.5*Sref*CL*Rho*V*V>=MTOW*9.81',
+
+])
 optim.set_minimum('CD')
 
 MDO.run_drivers()
 
-
-
-# def update_aircraft_from_aero(aero, aircraft):
-#     """
-#     Met à jour les attributs d'un objet `aircraft` avec les données provenant de l'objet `aero`.
-#     Gère les sous-structures comme `Fuselage` et `Wing`.
-#     """
-#     AttWing = list(vars(aircraft.Wing).keys())
-#     AttWing.remove('AF')
-
-#     AttFuse = list(vars(aircraft.Fuselage).keys())
-
-#     for i in range(len(AttWing)):
-#         Value = getattr(aero, AttWing[i])
-#         setattr(aircraft.Wing, AttWing[i], Value)
-    
-#     for j in range(len(AttFuse)):
-#         Value = getattr(aero, AttFuse[j])
-#         setattr(aircraft.Fuselage, AttFuse[j], Value)
-
-    
-#     return aircraft
-
-# update_aircraft_from_aero(MDO,StudyAircraft)
-
-# NACELLES
-# Lenght		:7.53
-# Lenght_Cabine	:3.43
-# Lenght_Nose	:2.75
-# Diameter	:1.58
-# OffSet_Nose	:0
-# OffSet_Tail	:0
-# PosX		:10.09
-# PosY		:0
-# PosZ		:1.96
-
-
-
-
-# CD,CL,CM = AeroStudie(StudyAircraft,Mach,[-2,-1,0,1,2,4,6])
-# Thrust = RamJet(StudyRamJet,Mach,Altitude)
 
 print("ok")
