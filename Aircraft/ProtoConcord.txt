@@ -1,0 +1,24 @@
+ICASWT
+
+FUSELAGE
+Lenght		:62.44
+Lenght_Cabine	:36.39
+Lenght_Nose	:11.68
+Diameter	:3.12
+OffSet_Nose	:0
+OffSet_Tail	:1.5
+
+WING
+Sref		:420
+Xref		:
+AR		:1.56
+AF		:ICAS
+TR		:0.1
+PosX		:17.80
+PosZ		:-0.5
+Sweep		:68
+
+ENGIN
+IntakeDiameter	:1.37
+TCombustion	:3400
+Teta		:0.5
