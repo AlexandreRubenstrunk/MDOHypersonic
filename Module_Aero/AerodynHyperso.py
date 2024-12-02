@@ -418,8 +418,9 @@ def RunCalculation():
 def GetValues():
 
     Actual_Path = os.getcwd()
-    Actual_Path = Actual_Path.split("MDOHypersonic")[0]
-    OutPath = os.path.join(Actual_Path, "MDOHypersonic", "Module_Aero", "hyper.out")
+    # Actual_Path = Actual_Path.split("MDOHypersonic")[0]
+    # OutPath = os.path.join(Actual_Path, "MDOHypersonic", "Module_Aero", "hyper.out")
+    OutPath = os.path.join(Actual_Path, "hyper.out")
 
     with open(OutPath, "r") as file:
         data = file.read()
