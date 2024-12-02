@@ -1,4 +1,61 @@
  --- Created by hyper, version 0.7 (31 Dec 2002)
- --- Date: 14:58  1Dec2024
+ --- Date: 18:46  2Dec2024
  --- Uses module Methods, version 0.8 (24 Dec 2007)
  --- Reading from file: C:\Users\alexa\Bureau\Perso\ESTACA\5A\Projet5A\MDOHypersonic\Module_Aero\hyperFolder\Analyse_Module_Aero.inp
+ Analyse module aero
+ Mach= 5.000  Sref=    420.8811  Cbar= 11.2034  Span= 37.5671
+ Moment Reference,   x=     15.8207  y=      0.0000  z=  0.0000
+     8 networks with     208 panels
+
+ SOLUTIONS FOR COMPLETE VEHICLE IN BODY AXES
+  #  alpha   beta      cx        cy        cz       cmx       cmy       cmz
+  1  15.68   0.00   0.00200   0.00000   0.04732   0.00000   0.00911   0.00000
+
+ SOLUTIONS FOR COMPLETE VEHICLE IN WIND AXES
+  #  alpha   beta     clift    cdrag     cpitch
+  1  15.68   0.00   0.04502   0.01471   0.00911
+
+ COMPUTATIONAL METHODS AND AVERAGE NORMALS
+    C=compression method;   E=expansion method
+   #  C  E    nx     ny     nz
+   1  7  5  0.000  0.651  0.000   Body
+   2  1  5  0.000 -0.001 -1.000   WING-UPPER
+   3  1  5 -0.000  0.001 -1.000   WING-LOWER
+   4  7  5  0.000  0.637  0.000   BODY
+   5  7  5  0.000 -0.651  0.000   global image of Body
+   6  1  5  0.000  0.001 -1.000   global image of WING-UPPER
+   7  1  5 -0.000 -0.001 -1.000   global image of WING-LOWER
+   8  7  5  0.000 -0.637  0.000   global image of BODY
+
+ COMPRESSION METHODS
+    1  Modified Newtonian
+    2  Newtonian-Prandtl-Meyer
+    3  Tangent Wedge
+    4  Tangent Wedge Infinite Mach
+    5  Old Tangent Cone
+    6  Cone At Angle Of Attack (later)
+    7  VanDyke Unified
+    8  Blunt Body Viscous (later)
+    9  Shock Expansion (later)
+   10  Free Molecular Flow (later)
+   11  Input value of CpStag
+   12  Hankey Flat Surface
+   13  Smyth Delta Wing
+   14  Modified Dahlem-Buck
+   15  BlastWave (later)
+   16  OSUBluntBody
+   17  Tangent Cone (Edwards)
+
+ EXPANSION METHODS
+    1  Cp=0
+    2  NewtonianPrandtlMeyer
+    3  PrandtlMeyer
+    4  ConeAtAngleOfAttack(later)
+    5  VanDykeUnified
+    6  Vacuum
+    7  Shock Expansion (later)
+    8  Input Value
+    9  Free Molecular Flow(later)
+   10  Modified Dahlem-Buck
+   11  ACMempirical(later)
+   12  half Prandtl-Meyer from freestream

@@ -1,0 +1,9 @@
+&hyp  title='Analyse module aero',
+wgsFileName= 'C:\Users\alexa\Bureau\Perso\ESTACA\5A\Projet5A\
+MDOHypersonic\Module_Aero\
+hyperFolder\Analyse_Module_Aero.wgs' ,
+cmethods=7,1,1,7,
+emethods=5,5,5,5,
+mach=3.2, sref=39.7, cbar=4.455333881989093,
+alpha=-2,-1,0,1,2,4,6,
+xref=12.267, span=8.910667763978186/
