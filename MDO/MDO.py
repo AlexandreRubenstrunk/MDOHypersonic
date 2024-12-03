@@ -31,6 +31,8 @@ class Propu(System):
         self.add_inward('TCombustion',StudyRamJet.TCombustion,unit="K",desc="Temperature inside the combustion chamber")
         self.add_inward('Teta',StudyRamJet.Teta,unit="rad",desc="Value of the angle of the intake rampe")
         self.add_inward('Number',1,desc='Number of ramjet')
+        
+        self.add_inward("Drag",0,unit="N",desc="Represente the value of the aerodynamic drag")
 
         self.add_outward('Thrust',0,unit="N",desc="Thrust generate by the propulsion systeme")
 
@@ -69,7 +71,7 @@ class Aero(System):
         self.add_inward('Lenght_Nose', StudyAircraft.Fuselage.Lenght_Nose, unit="m", desc="Lenght of the nose")
         self.add_inward('Diameter', StudyAircraft.Fuselage.Diameter, unit="m", desc="Diameter of the fuselage")
         self.add_inward('OffSet_Nose', StudyAircraft.Fuselage.OffSet_Nose, unit="m", desc="Off set of the nose of the fuselage")
-        self.add_inward('OffSet_Tail', StudyAircraft.Fuselage.Lenght_Cabine, unit="m", desc="Lenght of the fuselage")
+        self.add_inward('OffSet_Tail', StudyAircraft.Fuselage.OffSet_Tail, unit="m", desc="Lenght of the fuselage")
 
         self.add_inward('Sref', StudyAircraft.Wing.Sref, unit="m**2", desc="Surface of reference")
         self.add_inward('Xref', StudyAircraft.Wing.Xref, unit="m", desc="Chord of reference")
@@ -116,8 +118,10 @@ class Aero(System):
                 setattr(aircraft.Fuselage, AttFuse[j], Value)
 
             return aircraft
-        # print(self.CD)
-        print(0.5*self.Sref*self.CL*self.Rho*self.V*self.V)
+        print(self.CL)
+        print(self.CD)
+        print(self.AoA)
+        print("\n")
         self.count= self.count+1
         StudyAircraft = update_aircraft_from_aero(StudyAircraft)
         CD,CL,CM = AeroStudie(StudyAircraft,Mach,[self.AoA])
@@ -139,37 +143,43 @@ max_area = 600
 min_lenght = 50
 max_lenght = 70
 
+optim.options['tol'] = 1e-6
 optim.add_unknown('Sref', lower_bound=min_area, upper_bound=max_area)
 optim.add_unknown('Lenght', lower_bound=min_lenght, upper_bound=max_lenght)
 optim.add_unknown('AoA', lower_bound=0, upper_bound=5)
 optim.add_unknown(["Sref",'Xref', 'AR', 'TR', 'PosX', 'PosZ', 'Sweep'])
-optim.add_constraints([
+# optim.add_constraints([
 
-    'CL>0',
-    '0.5*Sref*CL*Rho*V*V>=MTOW*9.81'
+#     'CL>0',
+#     '0.5*Sref*CL*Rho*V*V>=MTOW*9.81'
 
-])
+# ])
 
 optim.set_minimum('CD')
 
 MDO.run_drivers()
 
+Drag = 0.5*MDO.Sref*MDO.CD*MDO.Rho*MDO.V*MDO.V
+
 # MDOEngin = Propu("MDOEngin")
-# PropuOpti = MDOEngin.add_driver(Optimizer('optim',methode='COBYLA'))
+# MDOEngin.Drag = Drag
+# PropuOpti = MDOEngin.add_driver(Optimizer('optim',method='COBYLA'))
 # PropuOpti.add_unknown('IntakeDiameter', lower_bound=0, upper_bound=3)
 # PropuOpti.add_unknown('TCombustion', lower_bound=500, upper_bound=3500)
 # PropuOpti.add_unknown('Teta', lower_bound=0, upper_bound=1)
 # PropuOpti.add_unknown('Number', lower_bound=1, upper_bound=5)
 
-# # PropuOpti.add_unknown(['IntakeDiameter','TCombustion','Teta','Number'])
+# PropuOpti.add_unknown(['IntakeDiameter','TCombustion','Teta','Number'])
 
-# # PropuOpti.add_constraints([
-# #     'Number - round(Number)=0',
-# #     'TCombustion <= 3500',
-# #     '0<IntakeDiameter<=2'
-# # ])
+# PropuOpti.add_constraints([
+#     'Number - round(Number)=0',
+#     'TCombustion <= 3500',
+#     'Thrust>=Drag',
+#     "IntakeDiameter>0"  #Comme si il ne prenais pas en compte cette partie 
 
-# PropuOpti.set_maximum("Thrust")
+# ])
+
+# PropuOpti.set_minimum("IntakeDiameter")
 # MDOEngin.run_drivers()
 
 
