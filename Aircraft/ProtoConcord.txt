@@ -1,4 +1,4 @@
-ICASWT
+ProtoConcord
 
 FUSELAGE
 Lenght		:62.44
@@ -10,7 +10,7 @@ OffSet_Tail	:1.5
 
 WING
 Sref		:420
-Xref		:
+Xref		:14
 AR		:1.56
 AF		:ICAS
 TR		:0.1
