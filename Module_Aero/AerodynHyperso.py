@@ -269,7 +269,7 @@ def CFDFileWing(Avion:Aircraft,WingPoint):
         File.write(STR)
     
 
-def FileCreation(Avion,Mach,Alphas,NB_CF=4, NB_Point_CF=5, NB_CW=6, CFD=False):
+def FileCreation(Avion,Mach,Alphas,NB_CF=4, NB_Point_CF=5, NB_CW=6, CFD=False,Gif=False):
     """This function aime to create the file needed to compute an aircraft with Hyper.\n
     Avion: Is the studied aircraft\n
     Mach: Is the studied mach number\n
@@ -286,8 +286,9 @@ def FileCreation(Avion,Mach,Alphas,NB_CF=4, NB_Point_CF=5, NB_CW=6, CFD=False):
     if CFD == True:
         CFDFileWing(Avion,WingPoint)
 
-
-    if __name__=="__main__":
+    if Gif==True:
+        PlotAircraft(FuselagePoint,WingPoint,NacellesPoint,Gif=Gif)
+    elif __name__=="__main__":
         PlotAircraft(FuselagePoint,WingPoint,NacellesPoint)
         PlotAircraftMesh(FuselagePoint,WingPoint,NacellesPoint)
 
@@ -350,7 +351,7 @@ def PlotAircraftMesh(PointFuselage, Pointwing, PointNacelles):
     plt.axis("equal")
     plt.show()
 
-def PlotAircraft(PointFuselage, Pointwing, PointNacelles):
+def PlotAircraft(PointFuselage, Pointwing, PointNacelles,Gif=False):
     """Plots the aircraft points as solid surfaces with symmetry along the Y-axis.\n
     PointFuselage, Pointwing, PointNacelles: Numpy arrays with fuselage, wing, and nacelle points in 3D coordinates."""
 
@@ -399,6 +400,30 @@ def PlotAircraft(PointFuselage, Pointwing, PointNacelles):
     ax.set_zlabel("Z")
     plt.axis("equal")
     plt.show(block=False)
+    if Gif == True:
+        path = "C:\\Users\\alexa\\Bureau\\Perso\\ESTACA\\5A\\Projet5A\\MDOHypersonic\\Module_Aero\\ImageGIf"
+        def get_next_filename(directory, extension=".png"):
+            """Retourne le prochain nom de fichier avec un numéro unique."""
+            # Lister les fichiers existants dans le dossier
+            files = os.listdir(directory)
+            
+            # Filtrer les fichiers avec l'extension spécifiée
+            numbers = []
+            for file in files:
+                if file.endswith(extension):
+                    try:
+                        # Extraire le numéro du nom de fichier (avant l'extension)
+                        number = int(file.replace(extension, ""))
+                        numbers.append(number)
+                    except ValueError:
+                        continue  # Ignorer les fichiers sans numéro valide
+            
+            # Trouver le plus grand numéro ou démarrer à 0 si aucun fichier n'est présent
+            next_number = max(numbers, default=0) + 1
+            return os.path.join(directory, f"{next_number}{extension}")
+        name = get_next_filename(path)
+        plt.savefig(name, dpi=300, bbox_inches='tight')
+        plt.close()
 
 def RunCalculation():
 
@@ -438,17 +463,17 @@ def GetValues():
 
     return CD,CL,CM
  
-def AeroStudie(Avion, Mach, Alphas):
+def AeroStudie(Avion, Mach, Alphas,Gif=False):
     """ This function aime to do a full Hypersonic aerodynamic analysis"""
     
-    FileCreation(Avion,Mach,Alphas)
+    FileCreation(Avion,Mach,Alphas,Gif=Gif)
     RunCalculation()
     CD,CL,CM = GetValues()
 
     return CD,CL,CM 
 
 if __name__=="__main__":
-    Avion = Aircraft.OpenAvion("ICASWT")
+    Avion = Aircraft.OpenAvion("ProtoConcord")
     CD,CL,CM = AeroStudie(Avion,3.2,[-2,-1,0,1,2,4,6])
     print(str("CD: " + str(CD) + "\n"))
     print(str("CL: " + str(CL) + "\n"))
