@@ -118,10 +118,10 @@ class Aero(System):
                 setattr(aircraft.Fuselage, AttFuse[j], Value)
 
             return aircraft
-        print(self.CL)
+        # print(self.CL)
         print(self.CD)
-        print(self.AoA)
-        print("\n")
+        # print(self.AoA)
+        # print("\n")
         self.count= self.count+1
         StudyAircraft = update_aircraft_from_aero(StudyAircraft)
         CD,CL,CM = AeroStudie(StudyAircraft,Mach,[self.AoA])
@@ -129,58 +129,83 @@ class Aero(System):
         self.CL = CL[0]
         self.CM = CM[0]
         return super().compute()
+    
 
 
 
 
-MDO = Aero("MDO")
 
-optim = MDO.add_driver(Optimizer('optim', method='COBYLA'))
+MdoAero = False
+MdoPropu = True
 
-min_area = 300
-max_area = 600
+if MdoAero == True:
+    MDO = Aero("MDO")
 
-min_lenght = 50
-max_lenght = 70
+    optim = MDO.add_driver(Optimizer('optim', method="COBYLA"))
+    # optim.options={"xtol": 1e-6, "gtol": 1e-6, "eps": 1e-8,'maxiter':100}
 
-optim.options['tol'] = 1e-6
-optim.add_unknown('Sref', lower_bound=min_area, upper_bound=max_area)
-optim.add_unknown('Lenght', lower_bound=min_lenght, upper_bound=max_lenght)
-optim.add_unknown('AoA', lower_bound=0, upper_bound=5)
-optim.add_unknown(["Sref",'Xref', 'AR', 'TR', 'PosX', 'PosZ', 'Sweep'])
-# optim.add_constraints([
+    # # Ajout d'un driver Optimizer à MDO
+    # optim = MDO.add_driver(Optimizer('optim', method="trust-constr"))
 
-#     'CL>0',
-#     '0.5*Sref*CL*Rho*V*V>=MTOW*9.81'
+    # # Définition des options pour l'optimiseur
+    # optim.options.update({
+    #     "tol": 1e-6,
+    #     "eps": 1e-8,
+    #     "maxiter": 100
+    # })
 
-# ])
+    min_area = 300
+    max_area = 600
 
-optim.set_minimum('CD')
+    min_lenght = 50
+    max_lenght = 70
 
-MDO.run_drivers()
+    optim.options['tol'] = 1e-4
+    optim.options['monitor'] = True
+    optim.add_unknown('Sref', lower_bound=min_area, upper_bound=max_area)
+    optim.add_unknown('Lenght', lower_bound=min_lenght, upper_bound=max_lenght)
+    optim.add_unknown('AoA', lower_bound=0, upper_bound=5)
+    optim.add_unknown(["Sref",'Xref', 'AR', 'TR', 'PosX', 'PosZ', 'Sweep'])
+    optim.add_constraints([
 
-Drag = 0.5*MDO.Sref*MDO.CD*MDO.Rho*MDO.V*MDO.V
+        'CL>0',
+        '0.5*Sref*CL*Rho*V*V>=MTOW*9.81'
 
-# MDOEngin = Propu("MDOEngin")
-# MDOEngin.Drag = Drag
-# PropuOpti = MDOEngin.add_driver(Optimizer('optim',method='COBYLA'))
-# PropuOpti.add_unknown('IntakeDiameter', lower_bound=0, upper_bound=3)
-# PropuOpti.add_unknown('TCombustion', lower_bound=500, upper_bound=3500)
-# PropuOpti.add_unknown('Teta', lower_bound=0, upper_bound=1)
-# PropuOpti.add_unknown('Number', lower_bound=1, upper_bound=5)
+    ])
 
-# PropuOpti.add_unknown(['IntakeDiameter','TCombustion','Teta','Number'])
+    optim.set_minimum('CD')
 
-# PropuOpti.add_constraints([
-#     'Number - round(Number)=0',
-#     'TCombustion <= 3500',
-#     'Thrust>=Drag',
-#     "IntakeDiameter>0"  #Comme si il ne prenais pas en compte cette partie 
+    if 'verbose' not in optim.options:
+        optim.options['verbose'] = False
 
-# ])
+    MDO.run_drivers()
 
-# PropuOpti.set_minimum("IntakeDiameter")
-# MDOEngin.run_drivers()
+    Drag = 0.5*MDO.Sref*MDO.CD*MDO.Rho*MDO.V*MDO.V
+    print("\n\nDrag="+str(Drag)+"\n\n")
+
+if MdoPropu == True:
+    if MdoAero == False:
+        Drag = 592906.3444819592
+    MDOEngin = Propu("MDOEngin")
+    MDOEngin.Drag = Drag
+    PropuOpti = MDOEngin.add_driver(Optimizer('optim',method='COBYLA'))
+    PropuOpti.add_unknown('IntakeDiameter', lower_bound=0, upper_bound=3)
+    PropuOpti.add_unknown('TCombustion', lower_bound=500, upper_bound=3500)
+    PropuOpti.add_unknown('Teta', lower_bound=0, upper_bound=0.5)
+    PropuOpti.add_unknown('Number', lower_bound=1, upper_bound=5)
+
+    PropuOpti.add_unknown(['IntakeDiameter','TCombustion','Teta','Number'])
+
+    PropuOpti.add_constraints([
+        'Number - round(Number)=0',
+        'TCombustion <= 3500',
+        'Thrust>Drag',
+        "IntakeDiameter>0"  #Comme si il ne prenais pas en compte cette partie 
+
+    ])
+
+    PropuOpti.set_minimum("IntakeDiameter")
+    MDOEngin.run_drivers()
 
 
 print("ok")
