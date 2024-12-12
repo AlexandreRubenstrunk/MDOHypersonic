@@ -264,7 +264,7 @@ def Nozzel(D7,P7,T7,Rho7,Pinf,M7=1):
 
     return V8
 
-def GraphRamjet(RamJet:EngineRamJet,D4,X4,D5,X5,D6,X6,D7,X7,D8,X8):
+def GraphRamjet(RamJet:EngineRamJet,D4,X4,D5,X5,D6,X6,D7,X7,D8,X8,Gif=False):
     Upper = np.array([0,0])
     Lower = np.array([0,-RamJet.IntakeDiameter])
 
@@ -279,12 +279,41 @@ def GraphRamjet(RamJet:EngineRamJet,D4,X4,D5,X5,D6,X6,D7,X7,D8,X8):
     plt.figure()
     plt.plot(Lower[:,0],Lower[:,1],color="b")
     plt.plot(Upper[:,0],Upper[:,1],color="b")
-    plt.show()
+    
+    if Gif == True:
+        plt.show(block=False)
+        Actual_Path = os.getcwd()
+        Actual_Path = Actual_Path.split("MDOHypersonic")[0]
+        path = str(Actual_Path + "MDOHypersonic\\Module_Propu\\ImageGIf")
+        def get_next_filename(directory, extension=".png"):
+            """Retourne le prochain nom de fichier avec un numéro unique."""
+            # Lister les fichiers existants dans le dossier
+            files = os.listdir(directory)
+            
+            # Filtrer les fichiers avec l'extension spécifiée
+            numbers = []
+            for file in files:
+                if file.endswith(extension):
+                    try:
+                        # Extraire le numéro du nom de fichier (avant l'extension)
+                        number = int(file.replace(extension, ""))
+                        numbers.append(number)
+                    except ValueError:
+                        continue  # Ignorer les fichiers sans numéro valide
+            
+            # Trouver le plus grand numéro ou démarrer à 0 si aucun fichier n'est présent
+            next_number = max(numbers, default=0) + 1
+            return os.path.join(directory, f"{next_number}{extension}")
+        name = get_next_filename(path)
+        plt.savefig(name, dpi=300, bbox_inches='tight')
+        plt.close()
+    else:
+        plt.show()
 
     return
 
 
-def RamJet(RamJetStudied,Mach, Altitude):
+def RamJet(RamJetStudied,Mach, Altitude,Gif=False):
     M4,P4,Rho4,T4,Pinf,Vinf,Beta1,Beta2 = intake3Shock(RamJetStudied,Mach,Altitude)
     D4,X4 = Section34(RamJetStudied,Beta1,Beta2)
 
@@ -303,8 +332,10 @@ def RamJet(RamJetStudied,Mach, Altitude):
     D8 = 1.1*D6
     X8 = X7+D8
 
-
-    GraphRamjet(RamJetStudied,D4,X4,D5,X5,D6,X6,D7,X7,D8,X8)
+    if __name__ == "__main__":
+        GraphRamjet(RamJetStudied,D4,X4,D5,X5,D6,X6,D7,X7,D8,X8)
+    elif Gif==True:
+        GraphRamjet(RamJetStudied,D4,X4,D5,X5,D6,X6,D7,X7,D8,X8,Gif=Gif)
 
     return F
 
