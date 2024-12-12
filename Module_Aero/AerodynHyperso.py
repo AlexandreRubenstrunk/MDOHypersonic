@@ -399,9 +399,12 @@ def PlotAircraft(PointFuselage, Pointwing, PointNacelles,Gif=False):
     ax.set_ylabel("Y")
     ax.set_zlabel("Z")
     plt.axis("equal")
-    plt.show(block=False)
+    
     if Gif == True:
-        path = "C:\\Users\\alexa\\Bureau\\Perso\\ESTACA\\5A\\Projet5A\\MDOHypersonic\\Module_Aero\\ImageGIf"
+        plt.show(block=False)
+        Actual_Path = os.getcwd()
+        Actual_Path = Actual_Path.split("MDOHypersonic")[0]
+        path = str(Actual_Path + "MDOHypersonic\\Module_Aero\\ImageGIf")
         def get_next_filename(directory, extension=".png"):
             """Retourne le prochain nom de fichier avec un numéro unique."""
             # Lister les fichiers existants dans le dossier
@@ -424,6 +427,8 @@ def PlotAircraft(PointFuselage, Pointwing, PointNacelles,Gif=False):
         name = get_next_filename(path)
         plt.savefig(name, dpi=300, bbox_inches='tight')
         plt.close()
+    else:
+        plt.show()
 
 def RunCalculation():
 
