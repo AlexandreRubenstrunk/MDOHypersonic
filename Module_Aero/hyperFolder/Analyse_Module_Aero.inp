@@ -2,6 +2,6 @@
 wgsFileName= 'hyperFolder\Analyse_Module_Aero.wgs' ,
 cmethods=7,1,1,7,
 emethods=5,5,5,5,
-mach=5, sref=420.88107969680806, cbar=11.203444663720143,
-alpha=15.676218354053692,
-xref=15.820669012563108, span=37.5671137163499/
+mach=3.2, sref=420.0, cbar=16.408253082847338,
+alpha=-2,-1,0,1,2,4,6,
+xref=14.0, span=25.59687480924185/

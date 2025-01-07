@@ -2,7 +2,7 @@
  --- Uses module NetworkProcedures, version 0.64 (27Dec02)
  --- Uses module PanelProcedures, version 0.51 (27 Dec 2002)
  --- Uses module Methods, version 0.8 (24 Dec 2007)
- --- Date: 13:56  3Dec2024
+ --- Date: 13:49  7Jan2025
  --- Reading from file: C:\Users\alexa\Bureau\Perso\ESTACA\5A\Projet5A\MDOHypersonic\Module_Aero\hyperFolder\Analyse_Module_Aero.inp
  NETWORK           1
    R   C       x           y             z
