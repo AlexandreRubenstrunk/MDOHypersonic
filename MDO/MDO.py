@@ -9,7 +9,7 @@ sys.path.insert(1,Propu)
 from Module_Propu.PropuHyperso3Shocks import RamJet,EngineRamJet
 from Module_Aero.AerodynHyperso import AeroStudie,Wing,Aircraft,Body
 from cosapp.base import System
-from cosapp.drivers import Optimizer
+from cosapp.drivers import Optimizer, NonLinearSolver
 
 gamma = 1.4
 R = 287
@@ -54,11 +54,12 @@ class Propu(System):
             return RamJet
         
         if self.IntakeDiameter<0:
-            print("ok")
+            print("Negative Diameter")
         StudiedRamJet = update_ramjet_from_propu(StudiedRamJet)
+        
+        self.Thrust = self.Number*RamJet(StudiedRamJet,Mach, Altitude,Gif=False)
         print(self.Thrust)
-
-        self.Thrust = self.Number*RamJet(StudiedRamJet,Mach, Altitude)
+        # print(self.IntakeDiameter)
 
         
 
@@ -124,7 +125,7 @@ class Aero(System):
         # print("\n")
         self.count= self.count+1
         StudyAircraft = update_aircraft_from_aero(StudyAircraft)
-        CD,CL,CM = AeroStudie(StudyAircraft,Mach,[self.AoA])
+        CD,CL,CM = AeroStudie(StudyAircraft,Mach,[self.AoA],Gif=True)
         self.CD = CD[0]
         self.CL = CL[0]
         self.CM = CM[0]
@@ -135,14 +136,14 @@ class Aero(System):
 
 
 
-MdoAero = False
-MdoPropu = True
+MdoAero = True
+MdoPropu = False
 
 if MdoAero == True:
     MDO = Aero("MDO")
 
-    optim = MDO.add_driver(Optimizer('optim', method="COBYLA"))
-    # optim.options={"xtol": 1e-6, "gtol": 1e-6, "eps": 1e-8,'maxiter':100}
+    optim = MDO.add_driver(Optimizer('optim',method= 'COBYLA', verbose=1,max_iter=100))
+    # optim.options={"xtol": 1e-6, "gtol": 1e-6, "eps": 1e-8,'maxiter':100} COBYLA
 
     # # Ajout d'un driver Optimizer à MDO
     # optim = MDO.add_driver(Optimizer('optim', method="trust-constr"))
@@ -150,7 +151,7 @@ if MdoAero == True:
     # # Définition des options pour l'optimiseur
     # optim.options.update({
     #     "tol": 1e-6,
-    #     "eps": 1e-8,
+    #     "eps": 1e-6,
     #     "maxiter": 100
     # })
 
@@ -160,16 +161,15 @@ if MdoAero == True:
     min_lenght = 50
     max_lenght = 70
 
-    optim.options['tol'] = 1e-4
-    optim.options['monitor'] = True
+    # optim.options['tol'] = 1e-4
+    # optim.options['monitor'] = True
     optim.add_unknown('Sref', lower_bound=min_area, upper_bound=max_area)
     optim.add_unknown('Lenght', lower_bound=min_lenght, upper_bound=max_lenght)
     optim.add_unknown('AoA', lower_bound=0, upper_bound=5)
     optim.add_unknown(["Sref",'Xref', 'AR', 'TR', 'PosX', 'PosZ', 'Sweep'])
     optim.add_constraints([
 
-        'CL>0',
-        '0.5*Sref*CL*Rho*V*V>=MTOW*9.81'
+        '0.5*Sref*CL*Rho*V*V=MTOW*9.81'
 
     ])
 
@@ -188,19 +188,20 @@ if MdoPropu == True:
         Drag = 592906.3444819592
     MDOEngin = Propu("MDOEngin")
     MDOEngin.Drag = Drag
-    PropuOpti = MDOEngin.add_driver(Optimizer('optim',method='COBYLA'))
-    PropuOpti.add_unknown('IntakeDiameter', lower_bound=0, upper_bound=3)
+    PropuOpti = MDOEngin.add_driver(Optimizer('optim',method= 'COBYLA', verbose=1,max_iter=100))
+    PropuOpti.add_child(NonLinearSolver("nls", method="NR", tol=1e-2))
+    PropuOpti.add_unknown('IntakeDiameter', lower_bound=0.1, upper_bound=3)
     PropuOpti.add_unknown('TCombustion', lower_bound=500, upper_bound=3500)
-    PropuOpti.add_unknown('Teta', lower_bound=0, upper_bound=0.5)
+    PropuOpti.add_unknown('Teta', lower_bound=0, upper_bound=0.6)
     PropuOpti.add_unknown('Number', lower_bound=1, upper_bound=5)
 
     PropuOpti.add_unknown(['IntakeDiameter','TCombustion','Teta','Number'])
 
     PropuOpti.add_constraints([
-        'Number - round(Number)=0',
-        'TCombustion <= 3500',
+    #     'Number - round(Number)=0', #Comme si il ne prenais pas en compte cette partie 
+    #     'TCombustion <= 3500',
         'Thrust>Drag',
-        "IntakeDiameter>0"  #Comme si il ne prenais pas en compte cette partie 
+    #     "IntakeDiameter>0"  
 
     ])
 

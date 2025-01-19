@@ -417,11 +417,11 @@ def GraphRamjet(RamJet: EngineRamJet, D4, X4, D5, X5, D6, X6, D7, X7, D8, X8, Gi
     Lower = np.vstack([Lower, np.array([X5, -D5])])
     Lower = np.vstack([Lower, np.array([X6, -D6])])
     Lower = np.vstack([Lower, np.array([X7, -D7])])
-    Lower = np.vstack([Lower, np.array([X8, -D8 / 2 - D7 / 2])])
+    Lower = np.vstack([Lower, np.array([X8, -D8])])
 
     # Add successive points to the upper section (ramjet intake and diffuser sections)
     Upper = np.vstack([Upper, np.array([Lower[-2, 0], 0])])
-    Upper = np.vstack([Upper, np.array([X8, D8 / 2 - D7 / 2])])
+    Upper = np.vstack([Upper, np.array([X8, 0 ])])
 
     # Plot the geometry of the Ramjet engine
     plt.figure()
@@ -520,9 +520,9 @@ def RamJet(RamJetStudied, Mach, Altitude, Gif=False):
 
 if __name__ == "__main__":
     # Example usage of the RamJet function
-    Mach = 5
-    Altitude = 0
-    Name = "ICASWT"
+    Mach = 2
+    Altitude = 18000
+    Name = "ProtoConcord"
     RamJetStudied = EngineRamJet.OpenEngin(Name)
     print(RamJet(RamJetStudied, Mach, Altitude))
 

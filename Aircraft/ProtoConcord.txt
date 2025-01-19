@@ -19,6 +19,6 @@ PosZ		:-0.5
 Sweep		:68
 
 ENGIN
-IntakeDiameter	:1.37
+IntakeDiameter	:1.2
 TCombustion	:3400
-Teta		:0.5
+Teta		:0.6

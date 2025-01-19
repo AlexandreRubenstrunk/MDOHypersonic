@@ -680,7 +680,7 @@ def AeroStudie(Avion, Mach, Alphas, Gif=False):
 # Main execution block
 if __name__ == "__main__":
     # Open the aircraft object (using a method specific to your project)
-    Avion = Aircraft.OpenAvion("ProtoConcord")
+    Avion = Aircraft.OpenAvion("ICASWT")
     
     # Perform the aerodynamic study for the given aircraft, Mach number, and angles of attack
     CD, CL, CM = AeroStudie(Avion, 3.2, [-2, -1, 0, 1, 2, 4, 6])
